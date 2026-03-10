@@ -33,11 +33,12 @@ def send_telegram(caption, image_url):
         return None
 
 def run():
-    print("Mulai mengecek RSS...")
+    print("Mengecek koneksi RSS...")
     feed = feedparser.parse(RSS_URL)
     
     if not feed.entries:
-        print("RSS Kosong atau Gagal Diakses.")
+        print("RSS Kosong. Mencoba kirim pesan tes ke Telegram...")
+        send_telegram("⚠️ Bot Berhasil Jalan tapi RSS Kosong!", "https://m.21cineplex.com/images/logo.png")
         return
 
     # Baca link terakhir
@@ -45,19 +46,15 @@ def run():
     if os.path.exists(DB_FILE):
         with open(DB_FILE, "r") as f:
             last_link = f.read().strip()
-    else:
-        # Jika file belum ada, buat file kosong agar git tidak error nanti
-        with open(DB_FILE, "w") as f:
-            f.write("")
 
-    # Ambil postingan terbaru (paling atas di RSS)
+    # Ambil entri terbaru
     latest_entry = feed.entries[0]
     
-    # JIKA LINK BARU != LINK TERAKHIR, MAKA KIRIM
-    if latest_entry.link != last_link:
-        print(f"Update ditemukan: {latest_entry.title}")
+    # PAKSA KIRIM jika last_link kosong (biar ketahuan botnya jalan)
+    if not last_link or latest_entry.link != last_link:
+        print(f"Mengirim postingan terbaru: {latest_entry.title}")
         
-        # Logika Gambar (Cari yang bukan .svg)
+        # Ekstrak Gambar
         all_images = re.findall(r'src="([^"]+)"', latest_entry.description)
         image_url = ""
         for img in all_images:
@@ -65,28 +62,24 @@ def run():
                 image_url = img
                 break
         
-        # Lengkapi URL jika relatif
         if image_url and image_url.startswith('/'):
             image_url = f"https://m.21cineplex.com{image_url}"
-
-        # Jika gambar tidak ketemu, pakai logo Cineplex sebagai cadangan
+        
         if not image_url:
             image_url = "https://m.21cineplex.com/images/logo.png"
 
         caption = f"🎬 **{latest_entry.title}**"
         
-        # Kirim ke Telegram
         res = send_telegram(caption, image_url)
+        print(f"Respon Telegram: {res}")
         
         if res and res.get("ok"):
-            print("Berhasil terkirim ke Telegram.")
-            # Update file last_link.txt
             with open(DB_FILE, "w") as f:
                 f.write(latest_entry.link)
         else:
-            print(f"Gagal kirim: {res}")
+            print("Gagal mengirim! Cek apakah Bot sudah jadi ADMIN di channel.")
     else:
-        print("Tidak ada update baru. Link masih sama dengan sebelumnya.")
+        print("Sudah update (link sama). Tidak ada yang dikirim.")
 
 if __name__ == "__main__":
     run()
