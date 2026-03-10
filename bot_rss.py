@@ -4,9 +4,9 @@ import re
 import os
 import json
 
-# Konfigurasi
+# Konfigurasi Baru
 RSS_URL = "https://politepaul.com/fd/KQAvZFImsXrT.xml"
-TOKEN = "8751024478:AAGruoe__WA8fFXYiZ6CPaVr4OQqaw6z3Iw"
+TOKEN = "8479247479:AAE-9m6EniTIXfCIFssE294v04EulVgpg1M"
 CHAT_ID = "-1003839747899"
 DB_FILE = "last_link.txt"
 
