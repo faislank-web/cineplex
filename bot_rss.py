@@ -12,24 +12,43 @@ DB_FILE = "last_link.txt"
 # ===============================================
 
 def send_telegram(caption, image_url):
-    url = f"https://api.telegram.org/bot{TOKEN}/sendPhoto"
+    # Coba kirim sebagai Foto dulu
+    url_photo = f"https://api.telegram.org/bot{TOKEN}/sendPhoto"
+    keyboard = json.dumps({
+        "inline_keyboard": [
+            [{"text": "🎬 Cek Disini", "url": "https://t.me/+w6XDg0Ap0yhlY2I9"}],
+            [{"text": "📞 Hub. Admin", "url": "https://t.me/ksrfsj_bot"}]
+        ]
+    })
+    
     payload = {
         "chat_id": CHAT_ID,
         "caption": caption,
         "parse_mode": "Markdown",
-        "photo": image_url,
-        "reply_markup": json.dumps({
-            "inline_keyboard": [
-                [{"text": "🎬 Cek Disini", "url": "https://t.me/+w6XDg0Ap0yhlY2I9"}],
-                [{"text": "📞 Hub. Admin", "url": "https://t.me/ksrfsj_bot"}]
-            ]
-        })
+        "reply_markup": keyboard
     }
+
     try:
-        r = requests.post(url, data=payload, timeout=20)
-        return r.json()
+        # Jika ada image_url, coba kirim fotonya
+        if image_url:
+            r = requests.post(url_photo, data={**payload, "photo": image_url}, timeout=20)
+            res = r.json()
+            if res.get("ok"):
+                return res
+        
+        # JIKA GAGAL kirim foto (atau link gambar rusak), kirim sebagai TEXT saja
+        print("Gagal kirim foto atau gambar rusak, mencoba kirim teks saja...")
+        url_msg = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+        r_text = requests.post(url_msg, data={
+            "chat_id": CHAT_ID,
+            "text": caption,
+            "parse_mode": "Markdown",
+            "reply_markup": keyboard
+        })
+        return r_text.json()
+        
     except Exception as e:
-        print(f"Error Request: {e}")
+        print(f"Error: {e}")
         return None
 
 def run():
@@ -37,22 +56,18 @@ def run():
     feed = feedparser.parse(RSS_URL)
     
     if not feed.entries:
-        print("RSS Kosong. Mencoba kirim pesan tes ke Telegram...")
-        send_telegram("⚠️ Bot Berhasil Jalan tapi RSS Kosong!", "https://m.21cineplex.com/images/logo.png")
+        print("RSS Kosong.")
         return
 
-    # Baca link terakhir
     last_link = ""
     if os.path.exists(DB_FILE):
         with open(DB_FILE, "r") as f:
             last_link = f.read().strip()
 
-    # Ambil entri terbaru
     latest_entry = feed.entries[0]
     
-    # PAKSA KIRIM jika last_link kosong (biar ketahuan botnya jalan)
     if not last_link or latest_entry.link != last_link:
-        print(f"Mengirim postingan terbaru: {latest_entry.title}")
+        print(f"Memproses postingan: {latest_entry.title}")
         
         # Ekstrak Gambar
         all_images = re.findall(r'src="([^"]+)"', latest_entry.description)
@@ -65,21 +80,16 @@ def run():
         if image_url and image_url.startswith('/'):
             image_url = f"https://m.21cineplex.com{image_url}"
         
-        if not image_url:
-            image_url = "https://m.21cineplex.com/images/logo.png"
-
         caption = f"🎬 **{latest_entry.title}**"
         
         res = send_telegram(caption, image_url)
-        print(f"Respon Telegram: {res}")
+        print(f"Respon Akhir Telegram: {res}")
         
         if res and res.get("ok"):
             with open(DB_FILE, "w") as f:
                 f.write(latest_entry.link)
-        else:
-            print("Gagal mengirim! Cek apakah Bot sudah jadi ADMIN di channel.")
     else:
-        print("Sudah update (link sama). Tidak ada yang dikirim.")
+        print("Tidak ada update baru.")
 
 if __name__ == "__main__":
     run()
