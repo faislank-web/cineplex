@@ -22,35 +22,36 @@ def send_telegram(caption, image_url):
 
     if image_url:
         try:
-            # TEKNIK KHUSUS: Download dulu gambarnya ke server GitHub
+            # Mengikuti Header dari CURL yang kamu berikan
             headers = {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-                "Referer": "https://m.21cineplex.com/"
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+                "Referer": "https://m.21cineplex.com/",
+                "sec-ch-ua-platform": '"Windows"'
             }
-            img_data = requests.get(image_url, headers=headers, timeout=30)
             
-            if img_data.status_code == 200:
-                # Bungkus gambar jadi file virtual
-                photo = BytesIO(img_data.content)
+            print(f"Mencoba download gambar: {image_url}")
+            img_res = requests.get(image_url, headers=headers, timeout=30)
+            
+            if img_res.status_code == 200:
+                photo = BytesIO(img_res.content)
                 photo.name = 'poster.jpg'
                 
-                # Kirim ke Telegram sebagai FILE (bukan link)
                 url = f"https://api.telegram.org/bot{TOKEN}/sendPhoto"
                 files = {'photo': photo}
-                data = {
+                payload = {
                     "chat_id": CHAT_ID,
                     "caption": caption,
                     "parse_mode": "Markdown",
                     "reply_markup": keyboard
                 }
-                r = requests.post(url, files=files, data=data)
-                res = r.json()
-                if res.get("ok"):
-                    return res
+                r = requests.post(url, files=files, data=payload)
+                if r.json().get("ok"):
+                    return r.json()
+                print(f"Telegram Reject: {r.json()}")
         except Exception as e:
-            print(f"Gagal proses gambar: {e}")
+            print(f"Error proses gambar: {e}")
 
-    # CADANGAN: Jika gambar gagal total, kirim teks saja agar bot tidak mati
+    # Cadangan Teks
     url_msg = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
     return requests.post(url_msg, data={
         "chat_id": CHAT_ID,
@@ -69,21 +70,26 @@ def run():
         with open(DB_FILE, "r") as f:
             last_link = f.read().strip()
 
-    # Kita cek 3 entri terbaru (seperti Event di Pipedream)
     for entry in feed.entries[:3][::-1]:
         if entry.link != last_link:
             print(f"Memproses: {entry.title}")
             
-            # Cari gambar (Logika Pipedream: Cari src yang bukan .svg)
-            all_images = re.findall(r'src="([^"]+)"', entry.description or "")
+            description = entry.description or ""
+            # Mencari src di deskripsi
+            img_match = re.search(r'src="([^"]+)"', description)
             image_url = ""
-            for img in all_images:
-                if not img.lower().endswith('.svg'):
-                    image_url = img
-                    break
             
-            if image_url and image_url.startswith('/'):
-                image_url = f"https://m.21cineplex.com{image_url}"
+            if img_match:
+                image_url = img_match.group(1)
+                # LOGIKA BARU: Jika link gambar mengandung media.cinema21.co.id
+                # Kita pastikan mengarah ke server NEO ID seperti curl kamu
+                if "media.cinema21.co.id" in image_url:
+                    if image_url.startswith('//'):
+                        image_url = "https:" + image_url
+                    # Replace domain jika perlu agar sesuai curl
+                    image_url = image_url.replace("https://media.cinema21.co.id", "https://nos.jkt-1.neo.id/media.cinema21.co.id")
+                elif image_url.startswith('/'):
+                    image_url = f"https://nos.jkt-1.neo.id/media.cinema21.co.id{image_url}"
 
             caption = f"🎬 **{entry.title}**"
             res = send_telegram(caption, image_url)
