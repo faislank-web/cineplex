@@ -2,16 +2,16 @@ name: Bot RSS Movie 24/7
 
 on:
   schedule:
-    # Menjalankan bot setiap 30 menit otomatis
+    # Berjalan otomatis setiap 30 menit
     - cron: '*/30 * * * *'
   workflow_dispatch:
-    # Memungkinkan kamu menjalankan bot secara manual kapan saja
+    # Memungkinkan kamu klik "Run Workflow" manual buat tes
 
 jobs:
   run-bot:
     runs-on: ubuntu-latest
     
-    # Izin penting agar GitHub bisa mengupdate file last_link.txt di repo kamu
+    # Izin wajib agar bot bisa simpan history ke last_link.txt
     permissions:
       contents: write
 
@@ -26,7 +26,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install feedparser requests
+          pip install requests feedparser beautifulsoup4
 
       - name: Run RSS Bot
         run: python bot_rss.py
@@ -36,6 +36,6 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add last_link.txt
-          # Commit hanya jika ada perubahan pada file
-          git commit -m "Update history: Film baru terkirim" || echo "Tidak ada film baru untuk disimpan"
+          # Commit hanya jika ada perubahan file (film baru masuk)
+          git commit -m "Update history: Film baru terkirim" || echo "Tidak ada film baru"
           git push
