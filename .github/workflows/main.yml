@@ -1,33 +1,41 @@
-name: Cineplex Auto Bot
+name: Bot RSS Movie 24/7
+
 on:
   schedule:
-    - cron: '*/20 * * * *'
+    # Menjalankan bot setiap 30 menit otomatis
+    - cron: '*/30 * * * *'
   workflow_dispatch:
+    # Memungkinkan kamu menjalankan bot secara manual kapan saja
 
 jobs:
   run-bot:
     runs-on: ubuntu-latest
+    
+    # Izin penting agar GitHub bisa mengupdate file last_link.txt di repo kamu
     permissions:
       contents: write
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        
-      - name: Install Python
-        uses: actions/setup-python@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
-          
-      - name: Install Libs
-        run: pip install feedparser requests
-        
-      - name: Execute Script
-        run: python bot_rss.py
-        
-      - name: Save Progress
+
+      - name: Install Dependencies
         run: |
-          git config --global user.name "GitHub-Actions"
-          git config --global user.email "actions@github.com"
+          pip install feedparser requests
+
+      - name: Run RSS Bot
+        run: python bot_rss.py
+
+      - name: Save Progress (Commit last_link.txt)
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
           git add last_link.txt
-          git commit -m "Update history [skip ci]" || exit 0
+          # Commit hanya jika ada perubahan pada file
+          git commit -m "Update history: Film baru terkirim" || echo "Tidak ada film baru untuk disimpan"
           git push
