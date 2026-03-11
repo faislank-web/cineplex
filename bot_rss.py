@@ -20,10 +20,14 @@ def send_telegram(caption, image_url):
         ]
     })
 
-    # Jika ada image_url, kita download dulu gambarnya (seperti sistem Pipedream)
     if image_url:
+        print(f"Mencoba mengirim gambar: {image_url}")
         try:
-            headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+            # Gunakan Header agar tidak dianggap bot oleh Cineplex
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "Referer": "https://m.21cineplex.com/"
+            }
             img_res = requests.get(image_url, headers=headers, timeout=30)
             
             if img_res.status_code == 200:
@@ -39,12 +43,18 @@ def send_telegram(caption, image_url):
                     "reply_markup": keyboard
                 }
                 r = requests.post(url, files=files, data=payload)
-                if r.json().get("ok"):
-                    return r.json()
+                resp = r.json()
+                if resp.get("ok"):
+                    return resp
+                else:
+                    print(f"Telegram menolak foto: {resp}")
+            else:
+                print(f"Gagal download gambar dari Cineplex. Status code: {img_res.status_code}")
         except Exception as e:
-            print(f"Gagal download gambar: {e}")
+            print(f"Error proses gambar: {e}")
 
-    # Cadangan: Jika gambar gagal atau tidak ada, kirim teks saja
+    # Cadangan: Kirim Teks jika gambar gagal (seperti hasil yang kamu dapat tadi)
+    print("Mengirim pesan teks sebagai cadangan...")
     url_msg = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
     return requests.post(url_msg, data={
         "chat_id": CHAT_ID,
@@ -63,28 +73,27 @@ def run():
         with open(DB_FILE, "r") as f:
             last_link = f.read().strip()
 
-    # Cek 5 entri terbaru
-    for entry in feed.entries[:5][::-1]:
+    # Cek 3 entri terbaru (proses dari yang terlama ke terbaru)
+    for entry in feed.entries[:3][::-1]:
         if entry.link != last_link:
-            print(f"Memproses: {entry.title}")
+            print(f"Memproses judul: {entry.title}")
             
-            # --- LOGIKA PIPEDREAM CLONE ---
-            # 1. Ambil semua URL gambar dari deskripsi
+            # 1. Logika Pipedream: Ambil semua src="xxx"
             description = entry.description or ""
+            # regex /src="([^"]+)"/g di Node.js
             all_images = re.findall(r'src="([^"]+)"', description)
+            
             image_url = ""
-
             if all_images:
-                # 2. Cari gambar yang bukan .svg (Poster .jpg atau .png)
-                for url in all_images:
-                    if not url.endswith('.svg'):
-                        image_url = url
+                # 2. Cari yang bukan .svg
+                for img in all_images:
+                    if not img.lower().endswith('.svg'):
+                        image_url = img
                         break
             
-            # 3. Pastikan domain lengkap (Anti "URL host is empty")
+            # 3. Pastikan domain lengkap
             if image_url and image_url.startswith('/'):
                 image_url = f"https://m.21cineplex.com{image_url}"
-            # ------------------------------
 
             caption = f"🎬 **{entry.title}**"
             res = send_telegram(caption, image_url)
