@@ -15,7 +15,6 @@ TMDB_KEY = "61e2290429798c561450eb56b26de19b"
 def get_tmdb_data(title):
     try:
         clean_title = title.split(' (')[0].split(' - ')[0]
-        # Tambahkan append_to_response=videos untuk ambil link trailer
         search_url = f"https://api.themoviedb.org/3/search/movie?api_key={TMDB_KEY}&query={clean_title}&language=id-ID"
         res = requests.get(search_url).json()
         
@@ -23,7 +22,6 @@ def get_tmdb_data(title):
             movie = res['results'][0]
             movie_id = movie['id']
             
-            # Ambil detail + video trailer
             detail_url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key={TMDB_KEY}&language=id-ID&append_to_response=videos"
             details = requests.get(detail_url).json()
             
@@ -31,7 +29,6 @@ def get_tmdb_data(title):
             rating = movie.get('vote_average', '0')
             overview = movie.get('overview', 'Sinopsis belum tersedia.')
             
-            # Cari Trailer YouTube (pilih tipe 'Trailer' dan site 'YouTube')
             trailer_url = ""
             videos = details.get('videos', {}).get('results', [])
             for v in videos:
@@ -92,6 +89,7 @@ def run():
             
             tmdb = get_tmdb_data(title)
             
+            # SUSUN CAPTION
             caption = f"🔥 **NEW MOVIE UPDATE**\n\n"
             caption += f"🎬 **{title.upper()}**\n"
             
@@ -105,7 +103,7 @@ def run():
                 caption += "\n🍿 _Detail lengkap segera diperbarui!_\n"
             
             caption += "\n➖➖➖➖➖➖➖➖➖➖\n"
-            caption += "📢 @SheJua #Cineplex"
+            caption += "📢 @SheJua" # Hashcineplex sudah dihapus
 
             res = send_telegram(caption, image_url)
             if res.get("ok"):
