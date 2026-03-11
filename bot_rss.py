@@ -22,8 +22,7 @@ def send_telegram(caption, image_url):
 
     if image_url:
         try:
-            # Mengunduh gambar agar tidak diblokir Telegram (Trick Pipedream)
-            headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+            headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
             img_res = requests.get(image_url, headers=headers, timeout=30)
             
             if img_res.status_code == 200:
@@ -41,10 +40,11 @@ def send_telegram(caption, image_url):
                 r = requests.post(url, files=files, data=payload)
                 if r.json().get("ok"):
                     return r.json()
+                print(f"Detail Error Telegram: {r.json()}")
         except Exception as e:
             print(f"Gagal memproses gambar: {e}")
 
-    # Cadangan jika gambar tetap gagal (kirim teks saja)
+    # Kirim Teks jika gambar gagal/tidak ada
     url_msg = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
     return requests.post(url_msg, data={
         "chat_id": CHAT_ID,
@@ -56,22 +56,33 @@ def send_telegram(caption, image_url):
 def run():
     print("Mengecek RSS...")
     feed = feedparser.parse(RSS_URL)
-    if not feed.entries: return
+    if not feed.entries:
+        print("RSS kosong atau tidak bisa diakses.")
+        return
 
     last_link = ""
     if os.path.exists(DB_FILE):
         with open(DB_FILE, "r") as f:
             last_link = f.read().strip()
 
-    # Ambil 3 entri terbaru saja agar tidak spam
+    # Kita cek 3 entri terbaru
     for entry in feed.entries[:3][::-1]:
+        # Jika link belum pernah dikirim atau kamu ingin paksa kirim ulang (hapus last_link.txt)
         if entry.link != last_link:
             print(f"Mengirim: {entry.title}")
             
-            # Cari link gambar di dalam deskripsi
-            img_match = re.search(r'src="([^"]+)"', entry.description)
-            image_url = img_match.group(1) if img_match else ""
+            # LOGIKA PINTAR MENCARI GAMBAR (Mencari semua tag src)
+            image_url = ""
+            # Mencari semua link gambar di deskripsi
+            img_links = re.findall(r'src="([^"]+)"', entry.description)
             
+            for link in img_links:
+                # Ambil gambar pertama yang bukan .svg
+                if not link.endswith('.svg'):
+                    image_url = link
+                    break
+            
+            # Jika URL relatif, tambahkan domain
             if image_url and image_url.startswith('/'):
                 image_url = f"https://m.21cineplex.com{image_url}"
 
@@ -82,6 +93,8 @@ def run():
                 with open(DB_FILE, "w") as f:
                     f.write(entry.link)
                 last_link = entry.link
+            else:
+                print(f"Gagal: {res}")
 
 if __name__ == "__main__":
     run()
