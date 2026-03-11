@@ -22,14 +22,13 @@ def send_telegram(caption, image_url):
 
     if image_url:
         try:
-            # Mengikuti Header dari CURL yang kamu berikan
+            # Gunakan header lengkap agar diizinkan download oleh server Neo ID
             headers = {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
-                "Referer": "https://m.21cineplex.com/",
-                "sec-ch-ua-platform": '"Windows"'
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                "Referer": "https://m.21cineplex.com/"
             }
             
-            print(f"Mencoba download gambar: {image_url}")
+            print(f"Mencoba download gambar unik: {image_url}")
             img_res = requests.get(image_url, headers=headers, timeout=30)
             
             if img_res.status_code == 200:
@@ -47,11 +46,10 @@ def send_telegram(caption, image_url):
                 r = requests.post(url, files=files, data=payload)
                 if r.json().get("ok"):
                     return r.json()
-                print(f"Telegram Reject: {r.json()}")
         except Exception as e:
-            print(f"Error proses gambar: {e}")
+            print(f"Error: {e}")
 
-    # Cadangan Teks
+    # Cadangan pesan teks
     url_msg = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
     return requests.post(url_msg, data={
         "chat_id": CHAT_ID,
@@ -61,7 +59,6 @@ def send_telegram(caption, image_url):
     }).json()
 
 def run():
-    print("Mengecek RSS...")
     feed = feedparser.parse(RSS_URL)
     if not feed.entries: return
 
@@ -70,24 +67,31 @@ def run():
         with open(DB_FILE, "r") as f:
             last_link = f.read().strip()
 
-    for entry in feed.entries[:3][::-1]:
+    # Cek entri dari yang paling lama ke baru
+    for entry in feed.entries[:5][::-1]:
         if entry.link != last_link:
-            print(f"Memproses: {entry.title}")
+            print(f"Memproses judul: {entry.title}")
             
+            # 1. AMBIL URL GAMBAR DARI DESKRIPSI (Sesuai Pola Judul)
             description = entry.description or ""
-            # Mencari src di deskripsi
-            img_match = re.search(r'src="([^"]+)"', description)
-            image_url = ""
+            # Mencari src=".../movie-images/XXXX.jpg"
+            all_images = re.findall(r'src="([^"]+)"', description)
             
-            if img_match:
-                image_url = img_match.group(1)
-                # LOGIKA BARU: Jika link gambar mengandung media.cinema21.co.id
-                # Kita pastikan mengarah ke server NEO ID seperti curl kamu
+            image_url = ""
+            if all_images:
+                # Cari gambar pertama yang bukan .svg
+                for img in all_images:
+                    if not img.lower().endswith('.svg'):
+                        image_url = img
+                        break
+            
+            # 2. UBAH DOMAIN KE NEO ID (Agar tidak diblokir)
+            if image_url:
+                # Ambil hanya bagian path setelah domain atau pastikan domainnya benar
+                # Jika link mengandung cinema21 atau dimulai dengan /, kita arahkan ke Neo ID
                 if "media.cinema21.co.id" in image_url:
-                    if image_url.startswith('//'):
-                        image_url = "https:" + image_url
-                    # Replace domain jika perlu agar sesuai curl
-                    image_url = image_url.replace("https://media.cinema21.co.id", "https://nos.jkt-1.neo.id/media.cinema21.co.id")
+                    path = image_url.split("media.cinema21.co.id")[-1]
+                    image_url = f"https://nos.jkt-1.neo.id/media.cinema21.co.id{path}"
                 elif image_url.startswith('/'):
                     image_url = f"https://nos.jkt-1.neo.id/media.cinema21.co.id{image_url}"
 
