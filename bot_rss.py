@@ -21,40 +21,36 @@ def send_telegram(caption, image_url):
     })
 
     if image_url:
-        print(f"Mencoba mengirim gambar: {image_url}")
         try:
-            # Gunakan Header agar tidak dianggap bot oleh Cineplex
+            # TEKNIK KHUSUS: Download dulu gambarnya ke server GitHub
             headers = {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
                 "Referer": "https://m.21cineplex.com/"
             }
-            img_res = requests.get(image_url, headers=headers, timeout=30)
+            img_data = requests.get(image_url, headers=headers, timeout=30)
             
-            if img_res.status_code == 200:
-                photo = BytesIO(img_res.content)
+            if img_data.status_code == 200:
+                # Bungkus gambar jadi file virtual
+                photo = BytesIO(img_data.content)
                 photo.name = 'poster.jpg'
                 
+                # Kirim ke Telegram sebagai FILE (bukan link)
                 url = f"https://api.telegram.org/bot{TOKEN}/sendPhoto"
                 files = {'photo': photo}
-                payload = {
+                data = {
                     "chat_id": CHAT_ID,
                     "caption": caption,
                     "parse_mode": "Markdown",
                     "reply_markup": keyboard
                 }
-                r = requests.post(url, files=files, data=payload)
-                resp = r.json()
-                if resp.get("ok"):
-                    return resp
-                else:
-                    print(f"Telegram menolak foto: {resp}")
-            else:
-                print(f"Gagal download gambar dari Cineplex. Status code: {img_res.status_code}")
+                r = requests.post(url, files=files, data=data)
+                res = r.json()
+                if res.get("ok"):
+                    return res
         except Exception as e:
-            print(f"Error proses gambar: {e}")
+            print(f"Gagal proses gambar: {e}")
 
-    # Cadangan: Kirim Teks jika gambar gagal (seperti hasil yang kamu dapat tadi)
-    print("Mengirim pesan teks sebagai cadangan...")
+    # CADANGAN: Jika gambar gagal total, kirim teks saja agar bot tidak mati
     url_msg = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
     return requests.post(url_msg, data={
         "chat_id": CHAT_ID,
@@ -73,25 +69,19 @@ def run():
         with open(DB_FILE, "r") as f:
             last_link = f.read().strip()
 
-    # Cek 3 entri terbaru (proses dari yang terlama ke terbaru)
+    # Kita cek 3 entri terbaru (seperti Event di Pipedream)
     for entry in feed.entries[:3][::-1]:
         if entry.link != last_link:
-            print(f"Memproses judul: {entry.title}")
+            print(f"Memproses: {entry.title}")
             
-            # 1. Logika Pipedream: Ambil semua src="xxx"
-            description = entry.description or ""
-            # regex /src="([^"]+)"/g di Node.js
-            all_images = re.findall(r'src="([^"]+)"', description)
-            
+            # Cari gambar (Logika Pipedream: Cari src yang bukan .svg)
+            all_images = re.findall(r'src="([^"]+)"', entry.description or "")
             image_url = ""
-            if all_images:
-                # 2. Cari yang bukan .svg
-                for img in all_images:
-                    if not img.lower().endswith('.svg'):
-                        image_url = img
-                        break
+            for img in all_images:
+                if not img.lower().endswith('.svg'):
+                    image_url = img
+                    break
             
-            # 3. Pastikan domain lengkap
             if image_url and image_url.startswith('/'):
                 image_url = f"https://m.21cineplex.com{image_url}"
 
