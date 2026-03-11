@@ -32,3 +32,10 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16TTSN
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26TURE
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16WPOG
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16YOHA
+https://m.21cineplex.com/id/movies/16TASN
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16NWIA
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16PPEK
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16SONO
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26SMG3
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26SMX2
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16TASN
