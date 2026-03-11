@@ -22,38 +22,36 @@ def send_telegram(caption, image_url):
 
     if image_url:
         try:
-            # Unduh gambar ke memori (mirip cara Pipedream memproses event)
-            img_data = requests.get(image_url, timeout=20, headers={
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-            })
-            if img_data.status_code == 200:
-                photo = BytesIO(img_data.content)
+            # Mengunduh gambar agar tidak diblokir Telegram (Trick Pipedream)
+            headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+            img_res = requests.get(image_url, headers=headers, timeout=30)
+            
+            if img_res.status_code == 200:
+                photo = BytesIO(img_res.content)
                 photo.name = 'poster.jpg'
                 
-                url_photo = f"https://api.telegram.org/bot{TOKEN}/sendPhoto"
+                url = f"https://api.telegram.org/bot{TOKEN}/sendPhoto"
                 files = {'photo': photo}
-                data = {
+                payload = {
                     "chat_id": CHAT_ID,
                     "caption": caption,
                     "parse_mode": "Markdown",
                     "reply_markup": keyboard
                 }
-                r = requests.post(url_photo, files=files, data=data)
-                res = r.json()
-                if res.get("ok"):
-                    return res
+                r = requests.post(url, files=files, data=payload)
+                if r.json().get("ok"):
+                    return r.json()
         except Exception as e:
-            print(f"Gagal unduh/kirim gambar: {e}")
+            print(f"Gagal memproses gambar: {e}")
 
-    # Cadangan: Kirim Teks jika gambar tetap gagal
+    # Cadangan jika gambar tetap gagal (kirim teks saja)
     url_msg = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
-    r_text = requests.post(url_msg, data={
+    return requests.post(url_msg, data={
         "chat_id": CHAT_ID,
         "text": caption,
         "parse_mode": "Markdown",
         "reply_markup": keyboard
-    })
-    return r_text.json()
+    }).json()
 
 def run():
     print("Mengecek RSS...")
@@ -65,28 +63,25 @@ def run():
         with open(DB_FILE, "r") as f:
             last_link = f.read().strip()
 
-    # Ambil 5 entri terakhir untuk dicek (agar tidak terlewat)
-    entries = feed.entries[:5][::-1]
-
-    for entry in entries:
+    # Ambil 3 entri terbaru saja agar tidak spam
+    for entry in feed.entries[:3][::-1]:
         if entry.link != last_link:
-            print(f"Memproses: {entry.title}")
+            print(f"Mengirim: {entry.title}")
             
-            # Cari gambar dengan pola yang lebih luas (seperti Pipedream)
-            image_url = ""
+            # Cari link gambar di dalam deskripsi
             img_match = re.search(r'src="([^"]+)"', entry.description)
-            if img_match:
-                image_url = img_match.group(1)
-                if image_url.startswith('/'):
-                    image_url = f"https://m.21cineplex.com{image_url}"
+            image_url = img_match.group(1) if img_match else ""
+            
+            if image_url and image_url.startswith('/'):
+                image_url = f"https://m.21cineplex.com{image_url}"
 
             caption = f"🎬 **{entry.title}**"
             res = send_telegram(caption, image_url)
             
-            if res and res.get("ok"):
-                last_link = entry.link
+            if res.get("ok"):
                 with open(DB_FILE, "w") as f:
-                    f.write(last_link)
-    
+                    f.write(entry.link)
+                last_link = entry.link
+
 if __name__ == "__main__":
     run()
