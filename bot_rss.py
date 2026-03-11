@@ -20,9 +20,10 @@ def send_telegram(caption, image_url):
         ]
     })
 
+    # Jika ada image_url, kita download dulu gambarnya (seperti sistem Pipedream)
     if image_url:
         try:
-            headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+            headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
             img_res = requests.get(image_url, headers=headers, timeout=30)
             
             if img_res.status_code == 200:
@@ -40,11 +41,10 @@ def send_telegram(caption, image_url):
                 r = requests.post(url, files=files, data=payload)
                 if r.json().get("ok"):
                     return r.json()
-                print(f"Detail Error Telegram: {r.json()}")
         except Exception as e:
-            print(f"Gagal memproses gambar: {e}")
+            print(f"Gagal download gambar: {e}")
 
-    # Kirim Teks jika gambar gagal/tidak ada
+    # Cadangan: Jika gambar gagal atau tidak ada, kirim teks saja
     url_msg = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
     return requests.post(url_msg, data={
         "chat_id": CHAT_ID,
@@ -56,35 +56,35 @@ def send_telegram(caption, image_url):
 def run():
     print("Mengecek RSS...")
     feed = feedparser.parse(RSS_URL)
-    if not feed.entries:
-        print("RSS kosong atau tidak bisa diakses.")
-        return
+    if not feed.entries: return
 
     last_link = ""
     if os.path.exists(DB_FILE):
         with open(DB_FILE, "r") as f:
             last_link = f.read().strip()
 
-    # Kita cek 3 entri terbaru
-    for entry in feed.entries[:3][::-1]:
-        # Jika link belum pernah dikirim atau kamu ingin paksa kirim ulang (hapus last_link.txt)
+    # Cek 5 entri terbaru
+    for entry in feed.entries[:5][::-1]:
         if entry.link != last_link:
-            print(f"Mengirim: {entry.title}")
+            print(f"Memproses: {entry.title}")
             
-            # LOGIKA PINTAR MENCARI GAMBAR (Mencari semua tag src)
+            # --- LOGIKA PIPEDREAM CLONE ---
+            # 1. Ambil semua URL gambar dari deskripsi
+            description = entry.description or ""
+            all_images = re.findall(r'src="([^"]+)"', description)
             image_url = ""
-            # Mencari semua link gambar di deskripsi
-            img_links = re.findall(r'src="([^"]+)"', entry.description)
+
+            if all_images:
+                # 2. Cari gambar yang bukan .svg (Poster .jpg atau .png)
+                for url in all_images:
+                    if not url.endswith('.svg'):
+                        image_url = url
+                        break
             
-            for link in img_links:
-                # Ambil gambar pertama yang bukan .svg
-                if not link.endswith('.svg'):
-                    image_url = link
-                    break
-            
-            # Jika URL relatif, tambahkan domain
+            # 3. Pastikan domain lengkap (Anti "URL host is empty")
             if image_url and image_url.startswith('/'):
                 image_url = f"https://m.21cineplex.com{image_url}"
+            # ------------------------------
 
             caption = f"🎬 **{entry.title}**"
             res = send_telegram(caption, image_url)
@@ -93,8 +93,6 @@ def run():
                 with open(DB_FILE, "w") as f:
                     f.write(entry.link)
                 last_link = entry.link
-            else:
-                print(f"Gagal: {res}")
 
 if __name__ == "__main__":
     run()
