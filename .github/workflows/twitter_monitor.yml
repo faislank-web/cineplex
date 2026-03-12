@@ -1,0 +1,36 @@
+name: Twitter Monitor Workflow
+
+on:
+  schedule:
+    - cron: '*/20 * * * *' # Jalan setiap 20 menit (atau sesuaikan)
+  workflow_dispatch:      # Tombol jalankan manual
+
+jobs:
+  run-twitter-bot:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write     # Wajib untuk simpan database
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: pip install requests urllib3
+
+      - name: Run Twitter Monitor
+        run: python twitter_monitor.py
+
+      - name: Save Twitter History
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git pull origin main # Ambil perubahan terbaru agar tidak konflik
+          git add sent_tweets.txt
+          git commit -m "Update twitter history [skip ci]" || exit 0
+          git push
