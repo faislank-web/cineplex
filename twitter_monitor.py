@@ -6,17 +6,18 @@ import random
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-# --- KONFIGURASI (Palu Basa - Twitter Monitor) ---
+# --- KONFIGURASI (Palu Basa - Twitter Monitor GH) ---
 TOKEN = "8751024478:AAGruoe__WA8fFXYiZ6CPaVr4OQqaw6z3Iw"
 GROUP_CHAT_ID = "-1003746713720"
 DB_FILE = "sent_tweets.txt" 
 
+# Akun yang akan dipantau
 TARGET_ACCOUNTS = [
     "nyaineneng", "FilmUpdates", "FILM_Indonesia", 
     "cinema21", "sosmedkeras", "komedigelaap"
 ]
 
-# Pastikan file database ada agar tidak error
+# Pastikan database file ada
 if not os.path.exists(DB_FILE):
     with open(DB_FILE, "w") as f:
         f.write("")
@@ -34,16 +35,16 @@ def get_safe_session():
     return session
 
 def clean_content(text):
-    # Menghapus tanda kurung apa pun sebelum judul, seperti [DL NIME]
+    # Membersihkan tanda kurung sebelum judul (Instruksi: [DL NIME] dihapus)
     cleaned = re.sub(r'^\[.*?\]\s*', '', text)
-    # Menghapus link twitter internal
+    # Menghapus link twitter yang ada di dalam teks
     cleaned = re.sub(r'http\S+', '', cleaned)
     return cleaned.strip()
 
 def send_to_telegram(chat_id, text, media_url=None, is_video=False):
     session = get_safe_session()
     base_url = f"https://api.telegram.org/bot{TOKEN}"
-    # Teks tebal sesuai preferensi
+    # Teks tebal (Bold) untuk judul/isi
     caption = f"<b>{text}</b>"
     
     try:
@@ -69,15 +70,12 @@ def run_monitor():
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
     }
     
-    print(f"[*] Palu Basa Scan Dimulai...")
+    print(f"[*] Memulai Scan Twitter...")
     session = get_safe_session()
     random.shuffle(TARGET_ACCOUNTS)
     
-    if os.path.exists(DB_FILE):
-        with open(DB_FILE, "r") as f:
-            history = f.read().splitlines()
-    else:
-        history = []
+    with open(DB_FILE, "r") as f:
+        history = f.read().splitlines()
 
     for account in TARGET_ACCOUNTS:
         url = f"https://syndication.twitter.com/srv/timeline-profile/screen-name/{account}"
@@ -91,7 +89,7 @@ def run_monitor():
                 timeline = data['props']['pageProps']['timeline']['entries']
                 
                 if timeline:
-                    # Cek 3 tweet teratas
+                    # Cek 3 tweet teratas saja
                     for entry in timeline[:3]:
                         t = entry['content']['tweet']
                         tweet_id = str(t.get('id_str'))
@@ -101,13 +99,13 @@ def run_monitor():
                             m_url = None
                             is_v = False
                             
+                            # Cek Gambar/Video
                             if 'extended_entities' in t:
                                 media = t['extended_entities']['media'][0]
                                 if media['type'] == 'photo':
                                     m_url = media['media_url_https']
                                 elif media['type'] in ['video', 'animated_gif']:
-                                    variants = media['video_info']['variants']
-                                    best_v = max([v for v in variants if 'bitrate' in v], key=lambda x: x['bitrate'])
+                                    best_v = max([v for v in media['video_info']['variants'] if 'bitrate' in v], key=lambda x: x['bitrate'])
                                     m_url = best_v['url']
                                     is_v = True
                             
@@ -115,7 +113,7 @@ def run_monitor():
                                 with open(DB_FILE, "a") as f:
                                     f.write(f"{tweet_id}\n")
                                 history.append(tweet_id)
-                                print(f"   [OK] @{account} Terkirim.")
+                                print(f"   [OK] @{account} -> Berhasil terkirim.")
         except:
             continue
 
