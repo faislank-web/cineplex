@@ -14,7 +14,7 @@ DB_FILE = "sent_tweets.txt"
 # Akun yang akan dipantau
 TARGET_ACCOUNTS = [
     "nyaineneng", "FilmUpdates", "FILM_Indonesia", 
-    "cinema21", "sosmedkeras", "komedigelaap"
+    "cinema21", "rofmeov", "sosmedkeras", "komedigelaap"
 ]
 
 # Pastikan database file ada
