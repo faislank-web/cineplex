@@ -43,3 +43,5 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MFTE
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26LCTM
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26IMKL
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16TPRK
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16HOSO
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16YLBH
