@@ -47,3 +47,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16HOSO
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16YLBH
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16MPRT
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16IDAH
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26KWAN
