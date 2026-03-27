@@ -50,3 +50,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16IDAH
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26KWAN
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16CTES
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16KKSA
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DRAA
