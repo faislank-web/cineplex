@@ -3,12 +3,16 @@ import re
 import json
 import os
 import random
+import time
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-# --- KONFIGURASI (Palu Basa - Twitter Monitor GH) ---
+# --- KONFIGURASI ---
 TOKEN = "8751024478:AAGruoe__WA8fFXYiZ6CPaVr4OQqaw6z3Iw"
-GROUP_CHAT_ID = "-1003746713720"
+
+# Daftar ID Grup Anda
+TARGET_GROUPS = ["-1003760170878", "-1003473467525"]
+
 DB_FILE = "sent_tweets.txt" 
 
 # Akun yang akan dipantau
@@ -35,7 +39,7 @@ def get_safe_session():
     return session
 
 def clean_content(text):
-    # Membersihkan tanda kurung sebelum judul (Instruksi: [DL NIME] dihapus)
+    # Membersihkan tanda kurung sebelum judul agar rapi
     cleaned = re.sub(r'^\[.*?\]\s*', '', text)
     # Menghapus link twitter yang ada di dalam teks
     cleaned = re.sub(r'http\S+', '', cleaned)
@@ -44,8 +48,8 @@ def clean_content(text):
 def send_to_telegram(chat_id, text, media_url=None, is_video=False):
     session = get_safe_session()
     base_url = f"https://api.telegram.org/bot{TOKEN}"
-    # Teks tebal (Bold) untuk judul/isi
-    caption = f"<b>{text}</b>"
+    # Gunakan blockquote agar teks terlihat bersih dan elegan
+    caption = f"<blockquote>{text}</blockquote>"
     
     try:
         if media_url:
@@ -65,9 +69,18 @@ def send_to_telegram(chat_id, text, media_url=None, is_video=False):
     except:
         return False
 
+def broadcast_to_groups(text, media_url, is_v):
+    """Fungsi untuk mengirim ke semua grup di daftar"""
+    success_all = True
+    for group_id in TARGET_GROUPS:
+        if not send_to_telegram(group_id, text, media_url, is_v):
+            success_all = False
+        time.sleep(1) # Jeda antar grup agar aman
+    return success_all
+
 def run_monitor():
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 13; SM-S901B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36',
     }
     
     print(f"[*] Memulai Scan Twitter...")
@@ -89,8 +102,8 @@ def run_monitor():
                 timeline = data['props']['pageProps']['timeline']['entries']
                 
                 if timeline:
-                    # Cek 3 tweet teratas saja
-                    for entry in timeline[:3]:
+                    # Ambil 1 tweet teratas saja agar tidak spam saat pertama jalan
+                    for entry in timeline[:1]:
                         t = entry['content']['tweet']
                         tweet_id = str(t.get('id_str'))
                         
@@ -99,7 +112,6 @@ def run_monitor():
                             m_url = None
                             is_v = False
                             
-                            # Cek Gambar/Video
                             if 'extended_entities' in t:
                                 media = t['extended_entities']['media'][0]
                                 if media['type'] == 'photo':
@@ -109,13 +121,18 @@ def run_monitor():
                                     m_url = best_v['url']
                                     is_v = True
                             
-                            if (isi_bersih or m_url) and send_to_telegram(GROUP_CHAT_ID, isi_bersih, m_url, is_v):
+                            # Kirim ke SEMUA GRUP
+                            if (isi_bersih or m_url) and broadcast_to_groups(isi_bersih, m_url, is_v):
                                 with open(DB_FILE, "a") as f:
                                     f.write(f"{tweet_id}\n")
                                 history.append(tweet_id)
-                                print(f"   [OK] @{account} -> Berhasil terkirim.")
+                                print(f"    [OK] @{account} -> Terkirim ke semua grup.")
+            
+            # Jeda antar akun agar lebih aman
+            time.sleep(random.randint(5, 10))
         except:
             continue
 
 if __name__ == "__main__":
     run_monitor()
+    print("\n📍 Upload Complete Selamat Menyaksikan")
