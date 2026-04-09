@@ -10,15 +10,28 @@ TARGET_GROUPS = ["-1003760170878", "-1003951572012"]
 DB_FILE = "sent_tweets.txt" 
 TARGET_ACCOUNTS = ["nyaineneng", "cinema21", "sosmedkeras", "komedigelaap"]
 
+def get_guest_token():
+    """Mengambil Guest Token resmi Twitter agar tidak kena 429"""
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    }
+    try:
+        # Mengambil token dari halaman utama syndication
+        res = requests.post("https://api.twitter.com/1.1/guest/activate.json", 
+                           headers={'Authorization': 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA'}, 
+                           timeout=20)
+        return res.json().get('guest_token')
+    except:
+        return None
+
 def clean_content(text):
     cleaned = re.sub(r'^\[.*?\]\s*', '', text)
     cleaned = re.sub(r'http\S+', '', cleaned)
     return cleaned.strip()
 
 def send_telegram(chat_id, text, media_url=None, is_video=False):
-    if not TOKEN: return False
     base_url = f"https://api.telegram.org/bot{TOKEN}"
-    caption = f"<b>Update Baru:</b>\n\n<blockquote>{text}</blockquote>"
+    caption = f"<b>Update Terbaru:</b>\n\n<blockquote>{text}</blockquote>"
     try:
         if media_url:
             method = "sendVideo" if is_video else "sendPhoto"
@@ -32,31 +45,34 @@ def send_telegram(chat_id, text, media_url=None, is_video=False):
     except: return False
 
 def run_monitor():
-    print("🚀 BYPASS MODE ACTIVATED...")
+    print("🔓 ATTEMPTING TO BREAK 429 LIMIT...")
     if os.path.exists(DB_FILE):
         with open(DB_FILE, "r") as f: history = f.read().splitlines()
     else: history = []
 
+    # AMBIL GUEST TOKEN
+    guest_token = get_guest_token()
+    
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
+        'Authorization': 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA',
+        'x-guest-token': guest_token,
+        'Accept': 'application/json'
+    }
+
     random.shuffle(TARGET_ACCOUNTS)
 
     for account in TARGET_ACCOUNTS:
-        print(f"🔎 Checking @{account}...")
+        print(f"🔎 Scanning @{account}...")
         try:
-            # Trik Bypass: Pakai sub-domain berbeda dan parameter acak
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
-                'Accept': 'application/json',
-                'Referer': 'https://google.com'
-            }
-            # Tambahkan token acak agar Twitter tidak mendeteksi request yang sama
-            rand_token = random.randint(1000, 9999)
-            url = f"https://syndication.twitter.com/srv/timeline-profile/screen-name/{account}?dummy={rand_token}"
+            # Menggunakan URL Syndication dengan Guest Token
+            url = f"https://syndication.twitter.com/srv/timeline-profile/screen-name/{account}"
             
-            time.sleep(random.randint(10, 20)) # Jeda lebih lama agar tidak kena 429
+            # Jika punya guest_token, Twitter lebih melunak
             res = requests.get(url, headers=headers, timeout=30)
             
             if res.status_code == 429:
-                print(f"⚠️ Masih kena 429. Twitter sedang ketat. Skip dulu...")
+                print(f"❌ Tetap 429. IP GitHub ini sedang di-block berat.")
                 continue
 
             data_match = re.search(r'id="__NEXT_DATA__" type="application/json">(.*?)</script>', res.text)
@@ -66,10 +82,7 @@ def run_monitor():
             entries = data.get('props', {}).get('pageProps', {}).get('timeline', {}).get('entries', [])
             
             if not entries: continue
-
             item = entries[0].get('content', {}).get('tweet')
-            if not item: continue
-            
             tweet_id = str(item.get('id_str'))
 
             if tweet_id not in history:
@@ -84,14 +97,15 @@ def run_monitor():
                         m_url = best['url']
                         is_v = True
                 
-                print(f"✨ Sending update from @{account}...")
+                print(f"✨ SUCCESS! Sending @{account}")
                 for g_id in TARGET_GROUPS: send_telegram(g_id, text, m_url, is_v)
                 
                 with open(DB_FILE, "a") as f: f.write(f"{tweet_id}\n")
                 history.append(tweet_id)
             else:
-                print(f"✅ No new tweet for @{account}")
+                print(f"✅ No new update.")
                 
+            time.sleep(random.randint(10, 20)) # Jeda krusial
         except Exception as e: print(f"💥 Error: {e}")
 
 if __name__ == "__main__":
