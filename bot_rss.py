@@ -5,13 +5,14 @@ import os
 import json
 from io import BytesIO
 
-# ================= KONFIGURASI =================
+# ================= KONFIGURASI AMAN =================
+# Mengambil Token & API Key dari GitHub Secrets
+TOKEN = os.getenv("TELEGRAM_TOKEN")
+TMDB_KEY = os.getenv("TMDB_KEY")
+
 RSS_NOW_PLAYING = "https://politepol.com/fd/KQAvZFImsXrT.xml"
 URL_UPCOMING = "https://m.21cineplex.com/gui.coming_soon.php?order=2"
-
-TOKEN = "8479247479:AAE-9m6EniTIXfCIFssE294v04EulVgpg1M"
 DB_FILE = "last_link.txt"
-TMDB_KEY = "61e2290429798c561450eb56b26de19b"
 
 # --- PENGATURAN KHUSUS TIAP GRUP ---
 GRUP_CONFIG = {
@@ -33,6 +34,7 @@ GRUP_CONFIG = {
 
 def get_tmdb_data(title):
     try:
+        if not TMDB_KEY: return None
         clean_title = title.split(' (')[0].split(' - ')[0].replace('PRE-SALE', '').strip()
         search_url = f"https://api.themoviedb.org/3/search/movie?api_key={TMDB_KEY}&query={clean_title}&language=id-ID"
         res = requests.get(search_url).json()
@@ -52,6 +54,10 @@ def get_tmdb_data(title):
     return None
 
 def send_telegram(template_caption, image_url):
+    if not TOKEN:
+        print("❌ Error: TELEGRAM_TOKEN tidak ditemukan di Environment!")
+        return {"ok": False}
+        
     headers = {"User-Agent": "Mozilla/5.0"}
     status_ok = False
     
@@ -64,7 +70,6 @@ def send_telegram(template_caption, image_url):
         except: pass
 
     for chat_id, config in GRUP_CONFIG.items():
-        # Pasang Footer dan Tombol sesuai config grup
         caption = template_caption + f"\n\n➖➖➖➖➖➖➖➖➖➖\n📢 {config['footer']}"
         keyboard = json.dumps({"inline_keyboard": config['buttons']})
         
@@ -84,7 +89,7 @@ def send_telegram(template_caption, image_url):
     return {"ok": status_ok}
 
 def run():
-    print("Memulai pengecekan...")
+    print("🚀 Memulai pengecekan film baru...")
     history = []
     if os.path.exists(DB_FILE):
         with open(DB_FILE, "r") as f:
@@ -92,7 +97,6 @@ def run():
 
     new_entries = []
 
-    # Gabungkan pengecekan RSS dan Scraping
     # --- NOW PLAYING ---
     feed = feedparser.parse(RSS_NOW_PLAYING)
     for entry in feed.entries[:5][::-1]:
@@ -109,30 +113,34 @@ def run():
                 new_entries.append(entry.link)
 
     # --- UPCOMING ---
-    res = requests.get(URL_UPCOMING, headers={"User-Agent": "Mozilla/5.0"})
-    soup = BeautifulSoup(res.text, 'html.parser')
-    for item in soup.find_all('div', class_='grid_movie'):
-        title_tag = item.find('div', class_='title')
-        link_tag = item.find('a')
-        if title_tag and link_tag:
-            title = title_tag.text.strip()
-            link = "https://m.21cineplex.com/" + link_tag.get('href')
-            if link not in history:
-                tmdb = get_tmdb_data(title)
-                cap = f"🔥 **UPCOMING UPDATE**\n\n🎬 **{title.upper()}**\n"
-                if tmdb:
-                    cap += f"⭐️ **Rating:** {tmdb['rating']}/10\n🎭 **Genre:** {tmdb['genre']}\n\n📖 **Sinopsis:**\n_{tmdb['synopsis'][:250]}..._\n"
-                
-                img_tag = item.find('img')
-                img_url = img_tag.get('src') if img_tag else ""
-                if send_telegram(cap, img_url).get("ok"):
-                    history.append(link)
-                    new_entries.append(link)
+    try:
+        res = requests.get(URL_UPCOMING, headers={"User-Agent": "Mozilla/5.0"})
+        soup = BeautifulSoup(res.text, 'html.parser')
+        for item in soup.find_all('div', class_='grid_movie'):
+            title_tag = item.find('div', class_='title')
+            link_tag = item.find('a')
+            if title_tag and link_tag:
+                title = title_tag.text.strip()
+                link = "https://m.21cineplex.com/" + link_tag.get('href')
+                if link not in history:
+                    tmdb = get_tmdb_data(title)
+                    cap = f"🔥 **UPCOMING UPDATE**\n\n🎬 **{title.upper()}**\n"
+                    if tmdb:
+                        cap += f"⭐️ **Rating:** {tmdb['rating']}/10\n🎭 **Genre:** {tmdb['genre']}\n\n📖 **Sinopsis:**\n_{tmdb['synopsis'][:250]}..._\n"
+                    
+                    img_tag = item.find('img')
+                    img_url = img_tag.get('src') if img_tag else ""
+                    if send_telegram(cap, img_url).get("ok"):
+                        history.append(link)
+                        new_entries.append(link)
+    except: pass
 
     if new_entries:
         with open(DB_FILE, "w") as f:
             f.write("\n".join(history))
-        print(f"Berhasil update {len(new_entries)} film.")
+        print(f"✅ Selesai! Berhasil update {len(new_entries)} film baru.")
+    else:
+        print("ℹ️ Tidak ada film baru saat ini.")
 
 if __name__ == "__main__":
     run()
