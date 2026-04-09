@@ -31,22 +31,19 @@ jobs:
         run: python twitter_monitor.py
 
       - name: Save History
+        if: always() # Tetap jalankan simpan history meski ada error di tengah jalan
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # Ambil data terbaru dari server tanpa rebase yang bikin pusing
+          # Ambil status terbaru dari server
           git fetch origin main
           
-          # Cek apakah ada perubahan di sent_tweets.txt
+          # Jika file sent_tweets.txt ada, kita proses
           if [ -f sent_tweets.txt ]; then
             git add sent_tweets.txt
-            # Commit dengan pesan unik agar tidak dianggap duplikat
             git commit -m "Update history twitter [skip ci]" || echo "No changes to commit"
             
-            # PUSH PAKSA (Force) agar tidak ditolak/rejected oleh GitHub
+            # Paksa dorong (force push) untuk menghindari error 'rejected'
             git push origin main --force
-          fi
-            git commit -m "Update history twitter [skip ci]" || echo "No changes"
-            git push origin main
           fi
