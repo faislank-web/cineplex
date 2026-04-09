@@ -1,36 +1,37 @@
-name: Twitter Monitor Workflow
+name: Twitter Monitor Bot
 
 on:
   schedule:
-    - cron: '*/20 * * * *'
+    - cron: '*/30 * * * *'
   workflow_dispatch:
 
 jobs:
-  run-twitter-bot:
+  run-monitor:
     runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
 
       - name: Install Dependencies
         run: pip install requests
 
-      - name: Run Twitter Monitor
-        # Pastikan ini menunjuk ke file python monitor Anda
-        run: python twitter_monitor.py 
+      - name: Run Scan
+        env:
+          TWITTER_BOT_TOKEN: ${{ secrets.TWITTER_BOT_TOKEN }}
+        run: python twitter_monitor.py
 
-      - name: Save Twitter History
+      - name: Save History
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
           git add sent_tweets.txt
-          git commit -m "Update twitter history [skip ci]" || echo "No changes"
+          git commit -m "Update history twitter" || echo "No new tweets"
           git push
