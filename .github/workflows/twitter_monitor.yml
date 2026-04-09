@@ -2,20 +2,20 @@ name: Twitter Monitor Bot
 
 on:
   schedule:
-    - cron: '*/30 * * * *' # Berjalan otomatis setiap 30 menit
-  workflow_dispatch:      # Tombol manual untuk tes
+    - cron: '*/30 * * * *' # Cek setiap 30 menit
+  workflow_dispatch:      # Tombol manual
 
 jobs:
   run-monitor:
     runs-on: ubuntu-latest
     permissions:
-      contents: write     # Izin wajib untuk simpan history
+      contents: write
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # Mengambil seluruh riwayat agar pull aman
+          fetch-depth: 0 
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -35,10 +35,9 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # Ambil perubahan terbaru dari server agar tidak ditolak (rejected)
+          # Pastikan mengambil update terbaru sebelum push agar tidak ditolak (rejected)
           git pull origin main --rebase
           
-          # Cek jika ada perubahan pada file history
           if [ -f sent_tweets.txt ]; then
             git add sent_tweets.txt
             git commit -m "Update history twitter [skip ci]" || echo "No changes"
