@@ -6,25 +6,17 @@ import random
 import time
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+from io import BytesIO
 
 # --- KONFIGURASI AMAN ---
-# Ambil token dari GitHub Secrets
 TOKEN = os.getenv("TWITTER_BOT_TOKEN")
-
-# Daftar ID Grup Anda
 TARGET_GROUPS = ["-1003760170878", "-1003951572012"]
 DB_FILE = "sent_tweets.txt" 
 
-# Akun yang akan dipantau
 TARGET_ACCOUNTS = [
-    "nyaineneng", "FILM_Indonesia",
-    "cinema21", "sosmedkeras", "komedigelaap"
+    "nyaineneng", "FilmUpdates", "FILM_Indonesia", 
+    "cinema21", "rofmeov", "sosmedkeras", "komedigelaap"
 ]
-
-# Pastikan database file ada
-if not os.path.exists(DB_FILE):
-    with open(DB_FILE, "w") as f:
-        f.write("")
 
 def get_safe_session():
     session = requests.Session()
@@ -39,20 +31,15 @@ def get_safe_session():
     return session
 
 def clean_content(text):
-    # Sesuai instruksi: hapus tanda kurung di awal judul agar rapi
+    # Hapus tanda kurung di awal judul sesuai permintaan
     cleaned = re.sub(r'^\[.*?\]\s*', '', text)
-    # Menghapus link twitter yang ada di dalam teks
     cleaned = re.sub(r'http\S+', '', cleaned)
     return cleaned.strip()
 
 def send_to_telegram(chat_id, text, media_url=None, is_video=False):
-    if not TOKEN:
-        print("❌ Error: Token tidak ditemukan!")
-        return False
-        
+    if not TOKEN: return False
     session = get_safe_session()
     base_url = f"https://api.telegram.org/bot{TOKEN}"
-    # Menggunakan blockquote agar teks terlihat bersih
     caption = f"<blockquote>{text}</blockquote>"
     
     try:
@@ -74,71 +61,67 @@ def send_to_telegram(chat_id, text, media_url=None, is_video=False):
         return False
 
 def broadcast_to_groups(text, media_url, is_v):
-    success_all = True
     for group_id in TARGET_GROUPS:
-        if not send_to_telegram(group_id, text, media_url, is_v):
-            success_all = False
-        time.sleep(1) 
-    return success_all
+        send_to_telegram(group_id, text, media_url, is_v)
+        time.sleep(1.5) 
 
 def run_monitor():
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Linux; Android 13; SM-S901B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36',
-    }
-    
-    print(f"[*] Memulai Scan Twitter...")
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'}
     session = get_safe_session()
-    random.shuffle(TARGET_ACCOUNTS)
     
+    # Baca history
     if os.path.exists(DB_FILE):
         with open(DB_FILE, "r") as f:
             history = f.read().splitlines()
     else:
         history = []
 
+    print(f"[*] Memulai Scan untuk {len(TARGET_ACCOUNTS)} akun...")
+
     for account in TARGET_ACCOUNTS:
-        url = f"https://syndication.twitter.com/srv/timeline-profile/screen-name/{account}"
         try:
+            url = f"https://syndication.twitter.com/srv/timeline-profile/screen-name/{account}"
             response = session.get(url, headers=headers, timeout=30)
             if response.status_code != 200: continue
 
             data_match = re.search(r'id="__NEXT_DATA__" type="application/json">(.*?)</script>', response.text)
-            if data_match:
-                data = json.loads(data_match.group(1))
-                timeline = data['props']['pageProps']['timeline']['entries']
-                
-                if timeline:
-                    # Ambil tweet teratas
-                    for entry in timeline[:1]:
-                        t = entry['content']['tweet']
-                        tweet_id = str(t.get('id_str'))
-                        
-                        if tweet_id not in history:
-                            isi_bersih = clean_content(t.get('full_text', ''))
-                            m_url = None
-                            is_v = False
-                            
-                            if 'extended_entities' in t:
-                                media = t['extended_entities']['media'][0]
-                                if media['type'] == 'photo':
-                                    m_url = media['media_url_https']
-                                elif media['type'] in ['video', 'animated_gif']:
-                                    variants = media['video_info']['variants']
-                                    best_v = max([v for v in variants if 'bitrate' in v], key=lambda x: x['bitrate'])
-                                    m_url = best_v['url']
-                                    is_v = True
-                            
-                            if (isi_bersih or m_url) and broadcast_to_groups(isi_bersih, m_url, is_v):
-                                with open(DB_FILE, "a") as f:
-                                    f.write(f"{tweet_id}\n")
-                                history.append(tweet_id)
-                                print(f"    [OK] @{account} -> Terkirim.")
+            if not data_match: continue
             
-            time.sleep(random.randint(5, 10))
-        except:
+            data = json.loads(data_match.group(1))
+            entries = data['props']['pageProps']['timeline']['entries']
+            
+            if not entries: continue
+
+            # Ambil hanya 1 tweet paling baru dari akun ini
+            item = entries[0]['content']['tweet']
+            tweet_id = str(item.get('id_str'))
+
+            if tweet_id not in history:
+                isi_bersih = clean_content(item.get('full_text', ''))
+                m_url, is_v = None, False
+                
+                if 'extended_entities' in item:
+                    m = item['extended_entities']['media'][0]
+                    if m['type'] == 'photo':
+                        m_url = m['media_url_https']
+                    elif m['type'] in ['video', 'animated_gif']:
+                        vars = m['video_info']['variants']
+                        best = max([v for v in vars if 'bitrate' in v], key=lambda x: x['bitrate'])
+                        m_url = best['url']
+                        is_v = True
+                
+                print(f"    [NEW] Menemukan update dari @{account}")
+                broadcast_to_groups(isi_bersih, m_url, is_v)
+                
+                with open(DB_FILE, "a") as f:
+                    f.write(f"{tweet_id}\n")
+                history.append(tweet_id)
+            
+            time.sleep(random.randint(3, 7)) # Jeda tiap akun
+        except Exception as e:
+            print(f"    [ERR] Gagal scan @{account}: {e}")
             continue
 
 if __name__ == "__main__":
     run_monitor()
-    # Sesuai instruksi: footer diganti
     print("\n📍 Sukses Terkirim")
