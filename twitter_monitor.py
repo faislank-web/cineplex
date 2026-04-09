@@ -7,12 +7,12 @@ import time
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-# --- KONFIGURASI ---
-TOKEN = "8751024478:AAGruoe__WA8fFXYiZ6CPaVr4OQqaw6z3Iw"
+# --- KONFIGURASI AMAN ---
+# Ambil token dari GitHub Secrets
+TOKEN = os.getenv("TWITTER_BOT_TOKEN")
 
 # Daftar ID Grup Anda
-TARGET_GROUPS = ["-1003760170878", "-1003473467525"]
-
+TARGET_GROUPS = ["-1003760170878", "-1003951572012"]
 DB_FILE = "sent_tweets.txt" 
 
 # Akun yang akan dipantau
@@ -39,16 +39,20 @@ def get_safe_session():
     return session
 
 def clean_content(text):
-    # Membersihkan tanda kurung sebelum judul agar rapi
+    # Sesuai instruksi: hapus tanda kurung di awal judul agar rapi
     cleaned = re.sub(r'^\[.*?\]\s*', '', text)
     # Menghapus link twitter yang ada di dalam teks
     cleaned = re.sub(r'http\S+', '', cleaned)
     return cleaned.strip()
 
 def send_to_telegram(chat_id, text, media_url=None, is_video=False):
+    if not TOKEN:
+        print("❌ Error: Token tidak ditemukan!")
+        return False
+        
     session = get_safe_session()
     base_url = f"https://api.telegram.org/bot{TOKEN}"
-    # Gunakan blockquote agar teks terlihat bersih dan elegan
+    # Menggunakan blockquote agar teks terlihat bersih
     caption = f"<blockquote>{text}</blockquote>"
     
     try:
@@ -70,12 +74,11 @@ def send_to_telegram(chat_id, text, media_url=None, is_video=False):
         return False
 
 def broadcast_to_groups(text, media_url, is_v):
-    """Fungsi untuk mengirim ke semua grup di daftar"""
     success_all = True
     for group_id in TARGET_GROUPS:
         if not send_to_telegram(group_id, text, media_url, is_v):
             success_all = False
-        time.sleep(1) # Jeda antar grup agar aman
+        time.sleep(1) 
     return success_all
 
 def run_monitor():
@@ -87,8 +90,11 @@ def run_monitor():
     session = get_safe_session()
     random.shuffle(TARGET_ACCOUNTS)
     
-    with open(DB_FILE, "r") as f:
-        history = f.read().splitlines()
+    if os.path.exists(DB_FILE):
+        with open(DB_FILE, "r") as f:
+            history = f.read().splitlines()
+    else:
+        history = []
 
     for account in TARGET_ACCOUNTS:
         url = f"https://syndication.twitter.com/srv/timeline-profile/screen-name/{account}"
@@ -102,7 +108,7 @@ def run_monitor():
                 timeline = data['props']['pageProps']['timeline']['entries']
                 
                 if timeline:
-                    # Ambil 1 tweet teratas saja agar tidak spam saat pertama jalan
+                    # Ambil tweet teratas
                     for entry in timeline[:1]:
                         t = entry['content']['tweet']
                         tweet_id = str(t.get('id_str'))
@@ -117,22 +123,22 @@ def run_monitor():
                                 if media['type'] == 'photo':
                                     m_url = media['media_url_https']
                                 elif media['type'] in ['video', 'animated_gif']:
-                                    best_v = max([v for v in media['video_info']['variants'] if 'bitrate' in v], key=lambda x: x['bitrate'])
+                                    variants = media['video_info']['variants']
+                                    best_v = max([v for v in variants if 'bitrate' in v], key=lambda x: x['bitrate'])
                                     m_url = best_v['url']
                                     is_v = True
                             
-                            # Kirim ke SEMUA GRUP
                             if (isi_bersih or m_url) and broadcast_to_groups(isi_bersih, m_url, is_v):
                                 with open(DB_FILE, "a") as f:
                                     f.write(f"{tweet_id}\n")
                                 history.append(tweet_id)
-                                print(f"    [OK] @{account} -> Terkirim ke semua grup.")
+                                print(f"    [OK] @{account} -> Terkirim.")
             
-            # Jeda antar akun agar lebih aman
             time.sleep(random.randint(5, 10))
         except:
             continue
 
 if __name__ == "__main__":
     run_monitor()
-    print("\n📍 Upload Complete Selamat Menyaksikan")
+    # Sesuai instruksi: footer diganti
+    print("\n📍 Sukses Terkirim")
