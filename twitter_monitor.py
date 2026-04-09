@@ -5,11 +5,19 @@ import os
 import random
 import time
 
-# --- AMBIL DARI SECRETS ---
+# --- KONFIGURASI ---
 TOKEN = os.getenv("TWITTER_BOT_TOKEN")
 TARGET_GROUPS = ["-1003760170878", "-1003951572012"]
 DB_FILE = "sent_tweets.txt" 
 TARGET_ACCOUNTS = ["nyaineneng", "cinema21", "sosmedkeras", "komedigelaap"]
+
+# Daftar User-Agent agar tidak terdeteksi bot GitHub (Status 429)
+USER_AGENTS = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+]
 
 def clean_content(text):
     cleaned = re.sub(r'^\[.*?\]\s*', '', text)
@@ -17,10 +25,7 @@ def clean_content(text):
     return cleaned.strip()
 
 def send_telegram(chat_id, text, media_url=None, is_video=False):
-    if not TOKEN:
-        print("❌ ERROR: Token kosong! Cek GitHub Secrets.")
-        return False
-    
+    if not TOKEN: return False
     base_url = f"https://api.telegram.org/bot{TOKEN}"
     caption = f"<b>Update Baru:</b>\n\n<blockquote>{text}</blockquote>"
     
@@ -33,22 +38,11 @@ def send_telegram(chat_id, text, media_url=None, is_video=False):
         else:
             payload = {"chat_id": chat_id, "text": caption, "parse_mode": "HTML"}
             r = requests.post(f"{base_url}/sendMessage", json=payload, timeout=30)
-        
-        print(f"[*] Kirim ke {chat_id}: Status {r.status_code}")
         return r.status_code == 200
-    except Exception as e:
-        print(f"❌ Gagal kirim ke Telegram: {e}")
-        return False
+    except: return False
 
 def run_monitor():
-    print("🚀 MEMULAI SCANNING...")
-    
-    # Header lebih lengkap agar dikira manusia
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-    }
+    print("🚀 MEMULAI SCANNING (BYPASS MODE)...")
     
     if os.path.exists(DB_FILE):
         with open(DB_FILE, "r") as f:
@@ -56,19 +50,41 @@ def run_monitor():
     else:
         history = []
 
+    # Acak daftar akun agar tidak selalu mulai dari yang sama
+    random.shuffle(TARGET_ACCOUNTS)
+
     for account in TARGET_ACCOUNTS:
         print(f"\n🔎 Memeriksa @{account}...")
         try:
+            # Bypass Headers: Setiap akun pakai User-Agent beda
+            headers = {
+                'User-Agent': random.choice(USER_AGENTS),
+                'Accept': '*/*',
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Referer': 'https://twitter.com/',
+                'x-twitter-client-language': 'en',
+                'x-twitter-active-user': 'yes'
+            }
+
             url = f"https://syndication.twitter.com/srv/timeline-profile/screen-name/{account}"
+            
+            # Gunakan jeda acak SEBELUM request agar tidak terbaca pola bot
+            time.sleep(random.randint(5, 15))
+            
             res = requests.get(url, headers=headers, timeout=30)
             
+            if res.status_code == 429:
+                print(f"⚠️ Kena Limit (429) lagi. Coba ganti strategi...")
+                # Jika 429, kita coba sekali lagi dengan URL berbeda sedikit (tambah timestamp)
+                res = requests.get(f"{url}?t={int(time.time())}", headers=headers, timeout=30)
+
             if res.status_code != 200:
-                print(f"⚠️ Twitter menolak akses (Status: {res.status_code})")
+                print(f"❌ Gagal akses @{account} (Status: {res.status_code})")
                 continue
             
             data_match = re.search(r'id="__NEXT_DATA__" type="application/json">(.*?)</script>', res.text)
             if not data_match:
-                print(f"⚠️ JSON tidak ditemukan di halaman @{account}")
+                print(f"⚠️ JSON @{account} tidak ditemukan.")
                 continue
             
             data = json.loads(data_match.group(1))
@@ -82,7 +98,6 @@ def run_monitor():
             if not t: continue
             
             tweet_id = str(t.get('id_str'))
-            print(f"🆔 Tweet ID: {tweet_id}")
 
             if tweet_id not in history:
                 text = clean_content(t.get('full_text', ''))
@@ -97,7 +112,7 @@ def run_monitor():
                         m_url = best['url']
                         is_v = True
                 
-                print(f"✨ MENGIRIM TWEET BARU DARI @{account}...")
+                print(f"✨ MENGIRIM TWEET DARI @{account}!")
                 for g_id in TARGET_GROUPS:
                     send_telegram(g_id, text, m_url, is_v)
                 
@@ -106,10 +121,9 @@ def run_monitor():
                 history.append(tweet_id)
             else:
                 print(f"✅ @{account} sudah up-to-date.")
-            
-            time.sleep(random.randint(5, 10))
+                
         except Exception as e:
-            print(f"💥 ERROR pada @{account}: {e}")
+            print(f"💥 Error @{account}: {e}")
 
 if __name__ == "__main__":
     run_monitor()
