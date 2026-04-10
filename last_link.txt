@@ -63,3 +63,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MIX2
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=25MKT2
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16SOSA
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DWP2
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=25MKX2
