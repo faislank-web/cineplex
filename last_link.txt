@@ -87,3 +87,7 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16SK2G
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MOTU
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16KHIM
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26FURS
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26TGX2
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26TGUN
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26TUX2
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26TGMK
