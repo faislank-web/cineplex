@@ -94,3 +94,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26TGMK
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26COLY
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26EDIN
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26TTIG
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26TSY5
