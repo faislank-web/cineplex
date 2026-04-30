@@ -97,3 +97,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26TTIG
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26TSY5
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26PASR
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MSGH
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16NLKY
