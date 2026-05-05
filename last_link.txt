@@ -100,3 +100,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MSGH
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16NLKY
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26CMDL
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16DNAS
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16TRUH
