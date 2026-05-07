@@ -104,3 +104,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16TRUH
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26SWM3
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DDAY
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MMOS
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26COX2
