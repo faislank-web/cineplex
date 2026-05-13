@@ -107,3 +107,5 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MMOS
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26COX2
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16WDVD
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26PPAW
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26HOKM
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26SWCR
