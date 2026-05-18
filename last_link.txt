@@ -111,3 +111,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26HOKM
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26SWCR
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26PES3
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26NORL
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MSGS
