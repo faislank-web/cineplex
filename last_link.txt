@@ -114,3 +114,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26NORL
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MSGS
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DDX2
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26TSX2
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16LAKD
