@@ -119,3 +119,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16CLBK
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16PJIA
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26SUPL
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26SUX2
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26BACS
