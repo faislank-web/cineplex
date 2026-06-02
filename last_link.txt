@@ -126,3 +126,5 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MOAA
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DORH
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=25KANO
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26ODYY
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26HJTI
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16HHOR
