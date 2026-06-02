@@ -128,3 +128,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=25KANO
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26ODYY
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26HJTI
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16HHOR
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16PGWG
