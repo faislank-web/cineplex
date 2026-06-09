@@ -138,3 +138,5 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16CKHM
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MMX2
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16FOUO
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26ODX2
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16GBAA
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MVAA
