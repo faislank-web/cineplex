@@ -142,3 +142,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16GBAA
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MVAA
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16MJPS
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MOX2
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16PLAD
