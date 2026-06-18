@@ -146,3 +146,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16PLAD
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26OBSN
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26COC2
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26TS53
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26PPBD
