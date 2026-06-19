@@ -149,3 +149,6 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26TS53
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26PPBD
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16DBAG
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MMO3
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26ALPA
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26EDBN
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26SBND
