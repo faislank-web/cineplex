@@ -156,3 +156,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16TKKM
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16AWBD
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16STKR
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26SUP3
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16KUIU
