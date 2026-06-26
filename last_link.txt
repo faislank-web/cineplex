@@ -162,3 +162,5 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16MMIS
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26WTTJ
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16IJES
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16RSIH
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26SHRE
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16UBUN
