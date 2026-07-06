@@ -170,3 +170,5 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DMNN
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26SAMO
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16FWII
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MCIY
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16AABU
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16SMTN
