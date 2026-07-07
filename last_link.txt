@@ -173,3 +173,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MCIY
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16AABU
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16SMTN
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DHA4
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26EYES
