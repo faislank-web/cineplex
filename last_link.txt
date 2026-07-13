@@ -180,3 +180,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16JLBA
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26WUPX
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16LNOB
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16SSSO
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26EOOS
