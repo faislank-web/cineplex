@@ -182,3 +182,5 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16LNOB
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16SSSO
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26EOOS
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16OPCT
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16ADBC
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DWAR
