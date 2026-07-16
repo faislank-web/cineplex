@@ -187,3 +187,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DWAR
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26LSTE
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16PSAT
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16SIKN
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16BUDN
