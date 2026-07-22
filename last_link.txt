@@ -193,3 +193,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26KFSR
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16AAMC
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16BKIR
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26SBN3
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DYOU
