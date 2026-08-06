@@ -205,3 +205,6 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DSTS
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MUTY
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26BAMS
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DSX2
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26F2DT
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26HOPE
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26ICMN
