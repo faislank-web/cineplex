@@ -208,3 +208,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DSX2
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26F2DT
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26HOPE
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26ICMN
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16LB3H
