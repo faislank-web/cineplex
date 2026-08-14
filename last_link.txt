@@ -220,3 +220,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16WR69
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26APFS
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26PMC2
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26HPX2
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26REVL
