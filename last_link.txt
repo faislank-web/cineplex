@@ -226,3 +226,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16AIMI
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16EMPI
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16DGHH
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26ABEW
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16GAMA
