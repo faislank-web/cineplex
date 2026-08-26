@@ -230,3 +230,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16GAMA
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26WODD
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16IBAT
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16BPAN
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16AIBS
