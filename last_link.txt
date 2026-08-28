@@ -232,3 +232,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16IBAT
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16BPAN
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16AIBS
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26AWCT
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16HAST
