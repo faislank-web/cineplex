@@ -236,3 +236,8 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16HAST
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DCMF
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16LBEA
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26RUNR
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26ANEE
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16CONG
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DAFF
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16PIRK
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DIMH
