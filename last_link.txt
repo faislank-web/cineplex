@@ -241,3 +241,6 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16CONG
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DAFF
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16PIRK
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DIMH
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16CASO
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MIRR
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26REX2
