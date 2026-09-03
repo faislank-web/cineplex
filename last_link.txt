@@ -245,3 +245,5 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16CASO
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MIRR
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26REX2
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26ODLB
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26HBET
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16RSSL
