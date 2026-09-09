@@ -254,3 +254,5 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16GHOG
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16BPJR
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26FISD
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16MJSN
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26CRAS
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16DAPI
