@@ -256,3 +256,6 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26FISD
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16MJSN
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26CRAS
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16DAPI
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DIGR
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DIX2
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26LPUR
