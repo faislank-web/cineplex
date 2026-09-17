@@ -262,3 +262,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26LPUR
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16SSVR
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26DAAA
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16PJGL
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16LWMM
