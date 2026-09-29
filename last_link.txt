@@ -281,3 +281,5 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26OMOY
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26SFIR
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26SFX2
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26SREG
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16HGFL
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26RMAN
