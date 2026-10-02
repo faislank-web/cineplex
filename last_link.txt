@@ -289,3 +289,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16P1JA
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26SMAE
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26WALL
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26HUNY
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16SMAS
