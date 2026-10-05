@@ -292,3 +292,5 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26HUNY
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16SMAS
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=25SHOE
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26MONE
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16LPKN
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26INTN
