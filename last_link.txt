@@ -298,3 +298,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16PTKH
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16PAAE
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26UTER
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16FTES
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=265FDS
