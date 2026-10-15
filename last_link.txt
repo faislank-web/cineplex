@@ -306,3 +306,4 @@ https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=16PKAG
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26CYCE
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26CITH
 https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26JAI2
+https://m.21cineplex.com/gui.movie_details.php?sid=&movie_id=26GMX2
